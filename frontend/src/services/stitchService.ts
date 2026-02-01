@@ -1,6 +1,6 @@
-import { Layer } from '@/types/embroidery';
-
-const API_URL = 'http://localhost:8000';
+// import { Layer } from '@/types/embroidery'; // Unused
+// API_URL logic updated for production
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface AppliqueStep {
     name: string;

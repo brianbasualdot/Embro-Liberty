@@ -26,7 +26,7 @@ export default function Home() {
 
     try {
       // Endpoint matches backend/main.py
-      const res = await fetch('http://localhost:8000/segmentar', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/segmentar`, {
         method: 'POST',
         body: formData,
       });
@@ -36,7 +36,7 @@ export default function Home() {
 
       // Transform backend data to store layers
       // Backend returns: { capas: [ { color: "#hex", paths: [...] } ] }
-      const newLayers = data.capas.map((l: any, idx: number) => ({
+      const newLayers = data.capas.map((l: { color: string; paths: any[] }, idx: number) => ({
         id: `layer-${idx}`,
         name: `Color ${l.color}`,
         color: l.color,
@@ -76,7 +76,7 @@ export default function Home() {
                 const { layers } = useEditorStore.getState();
                 if (layers.length === 0) return alert("No hay nada que exportar.");
 
-                fetch('http://localhost:8000/export', {
+                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/export`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ layers, format: 'dst' })
