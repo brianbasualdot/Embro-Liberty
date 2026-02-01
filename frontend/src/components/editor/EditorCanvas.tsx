@@ -142,7 +142,7 @@ export default function EditorCanvas() {
             });
 
             fabricCanvas.add(hoopRect);
-            fabricCanvas.sendToBack(hoopRect);
+            fabricCanvas.sendObjectToBack(hoopRect);
             fabricCanvas.requestRenderAll();
 
             // Validation Event
