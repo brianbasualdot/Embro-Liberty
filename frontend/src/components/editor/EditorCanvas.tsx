@@ -116,11 +116,10 @@ export default function EditorCanvas() {
             // Let's assume for visual 1 unit = 1 pixel for now and scale later, 
             // OR assume standard 96 DPI where 1mm approx 3.78px.
             // Let's stick to a simple 10 scale factor relative to screen for now or 1:1 if zoomed.
-            // USER REQUESTED: Just draw the area. 
             // Let's standardise: 1 unit on canvas = 1 mm (easiest for CAD).
             // Canvas width 800-1000. Hoop 100mm.
 
-            const scale = 5; // Zoom factor for visibility
+            const scale = 3; // Zoom factor reduced to fit larger hoops (260mm * 3 = 780px)
 
             const hoopRect = new fabric.Rect({
                 left: fabricCanvas.width! / 2,

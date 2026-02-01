@@ -25,14 +25,18 @@ export default function Home() {
     formData.append('k', '5'); // Default 5 colors
 
     try {
-      const res = await fetch('http://localhost:8000/process-image', {
+      // Endpoint matches backend/main.py
+      const res = await fetch('http://localhost:8000/segmentar', {
         method: 'POST',
         body: formData,
       });
       const data = await res.json();
 
+      if (!data.capas) throw new Error("Formato de respuesta inválido");
+
       // Transform backend data to store layers
-      const newLayers = data.layers.map((l: any, idx: number) => ({
+      // Backend returns: { capas: [ { color: "#hex", paths: [...] } ] }
+      const newLayers = data.capas.map((l: any, idx: number) => ({
         id: `layer-${idx}`,
         name: `Color ${l.color}`,
         color: l.color,
@@ -44,7 +48,7 @@ export default function Home() {
 
     } catch (error) {
       console.error("Upload failed", error);
-      alert("Failed to process image");
+      alert("Error al procesar la imagen");
     } finally {
       setIsUploading(false);
     }

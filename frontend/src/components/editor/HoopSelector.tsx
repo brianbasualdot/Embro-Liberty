@@ -24,7 +24,7 @@ export default function HoopSelector() {
             </select>
 
             <span className="text-[10px] text-gray-400 border-l pl-2 ml-2">
-                Machine Ready
+                Máquina Lista
             </span>
         </div>
     );

@@ -53,18 +53,18 @@ export default function FabricSettings() {
         return (
             <div className="p-4 space-y-6">
                 <div className="text-center p-4 bg-gray-50 rounded border border-gray-100 mb-4">
-                    <p className="text-sm text-gray-500">No layer selected</p>
-                    <p className="text-xs text-gray-400 mt-1">Select a layer to configure stitch settings.</p>
+                    <p className="text-sm text-gray-500">Ninguna capa seleccionada</p>
+                    <p className="text-xs text-gray-400 mt-1">Selecciona una capa para configurar puntadas.</p>
                 </div>
 
                 {/* Project / Hoop Settings Fallback */}
                 <div>
-                    <h3 className="font-semibold text-gray-900 text-sm mb-3">Project Settings</h3>
+                    <h3 className="font-semibold text-gray-900 text-sm mb-3">Configuración del Proyecto</h3>
                     <div className="space-y-3">
-                        <label className="block text-xs font-medium text-gray-700">Machine Hoop</label>
+                        <label className="block text-xs font-medium text-gray-700">Bastidor de Máquina</label>
                         {/* We could move HoopSelector here, OR just show info. Let's show info/reminder to use top bar */}
                         <div className="p-3 bg-white border border-gray-200 rounded text-xs text-gray-600">
-                            Use the top toolbar to change the machine hoop size.
+                            Usa la barra superior para cambiar el tamaño del bastidor.
                         </div>
                     </div>
                 </div>
@@ -77,16 +77,16 @@ export default function FabricSettings() {
 
             <div className="space-y-2">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    Fabric Presets
+                    Preajustes de Tela
                 </h3>
-                <p className="text-xs text-gray-500">Auto-configure settings for your material.</p>
+                <p className="text-xs text-gray-500">Configuración automática según tu material.</p>
 
                 <select
                     value={selectedPreset}
                     onChange={(e) => handlePresetChange(e.target.value)}
                     className="w-full p-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                    <option value="custom">Custom / Manual</option>
+                    <option value="custom">Personalizado / Manual</option>
                     {FABRIC_PRESETS.map(preset => (
                         <option key={preset.id} value={preset.id}>
                             {preset.label}
@@ -99,7 +99,7 @@ export default function FabricSettings() {
                 <div className="flex items-center justify-between mb-4">
                     <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                         <Sliders size={16} />
-                        Advanced Configuration
+                        Configuración Avanzada
                     </label>
                     <button
                         onClick={() => setAdvancedMode(!advancedMode)}
@@ -120,7 +120,7 @@ export default function FabricSettings() {
                     {/* Density Slider */}
                     <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Density (Spacing)</span>
+                            <span className="text-gray-600">Densidad (Espaciado)</span>
                             <span className="font-mono text-gray-900">{settings.density || 4.0} mm</span>
                         </div>
                         <input
@@ -130,13 +130,13 @@ export default function FabricSettings() {
                             onChange={(e) => handleSettingChange('density', parseFloat(e.target.value))}
                             className="w-full"
                         />
-                        <p className="text-[10px] text-gray-400">Lower = Tighter stitches</p>
+                        <p className="text-[10px] text-gray-400">Menor = Puntadas más cerradas</p>
                     </div>
 
                     {/* Pull Compensation Slider */}
                     <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Pull Compensation</span>
+                            <span className="text-gray-600">Compensación de Tensión</span>
                             <span className="font-mono text-gray-900">{settings.pullCompensation || 0} mm</span>
                         </div>
                         <input
@@ -151,7 +151,7 @@ export default function FabricSettings() {
                     {/* Max Stitch Length Slider */}
                     <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                            <span className="text-gray-600">Max Stitch Length</span>
+                            <span className="text-gray-600">Largo Máx. Puntada</span>
                             <span className="font-mono text-gray-900">{settings.stitchLength || 3.5} mm</span>
                         </div>
                         <input
@@ -174,9 +174,9 @@ export default function FabricSettings() {
 
             <div className="pt-4 border-t border-gray-100 text-xs text-gray-400">
                 {!advancedMode ? (
-                    <p className="flex items-center gap-1 justify-center"><Lock size={12} /> Settings optimized for {selectedPreset !== 'custom' ? FABRIC_PRESETS.find(p => p.id === selectedPreset)?.label : 'Current Selection'}</p>
+                    <p className="flex items-center gap-1 justify-center"><Lock size={12} /> Optimizado para {selectedPreset !== 'custom' ? FABRIC_PRESETS.find(p => p.id === selectedPreset)?.label : 'Selección Actual'}</p>
                 ) : (
-                    <p className="flex items-center gap-1 justify-center text-blue-500"><Unlock size={12} /> Manual Override Active</p>
+                    <p className="flex items-center gap-1 justify-center text-blue-500"><Unlock size={12} /> Control Manual Activo</p>
                 )}
             </div>
 

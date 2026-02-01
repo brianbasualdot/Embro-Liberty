@@ -35,13 +35,13 @@ export default function LayerList() {
         <aside className="w-64 bg-[#f7f7f5] border-r border-[#e5e5e5] h-screen flex flex-col select-none">
             <div className="p-4 border-b border-[#e5e5e5] flex items-center gap-2">
                 <Layers size={18} className="text-gray-600" />
-                <span className="font-semibold text-sm text-gray-700">Layers</span>
+                <span className="font-semibold text-sm text-gray-700">Capas</span>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2">
                 {layers.length === 0 && (
                     <div className="text-xs text-gray-400 text-center mt-10">
-                        No layers loaded. Upload an image to begin.
+                        No hay capas cargadas. Sube una imagen para comenzar.
                     </div>
                 )}
 
