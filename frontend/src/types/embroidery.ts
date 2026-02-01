@@ -32,7 +32,7 @@ export interface Layer {
     stitchCount?: number;
     threadLength?: number; // meters
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    paths: any[]; // Fabric object data or coordinates
+    paths: number[][][] | any[]; // Fabric object data or coordinates
     settings?: StitchSettings;
 }
 

@@ -41,7 +41,6 @@ export default function FabricSettings() {
     const handleSettingChange = (key: string, value: number | string | boolean) => {
         if (!selectedLayerId) return;
 
-        // @ts-ignore
         const newSettings = { ...settings, [key]: value };
         setSettings(newSettings);
 
@@ -61,7 +60,7 @@ export default function FabricSettings() {
 
         setIsGenerating(true);
         try {
-            const polyPoints = selectedLayer.paths[0].map((p: any) => ({ x: p[0], y: p[1] }));
+            const polyPoints = selectedLayer.paths[0].map((p: number[]) => ({ x: p[0], y: p[1] }));
 
             const { stitchService } = await import('@/services/stitchService');
             const steps = await stitchService.generateApplique(polyPoints);
@@ -78,7 +77,7 @@ export default function FabricSettings() {
                     pullCompensation: 0,
                     underlay: false,
                     angle: 0,
-                    stitchType: step.type as any
+                    stitchType: step.type as StitchType
                 }
             }));
 
@@ -242,7 +241,7 @@ export default function FabricSettings() {
                             if (selectedLayer && selectedLayer.paths && selectedLayer.paths.length > 0) {
                                 // Taking the first path for now as 'path' 
                                 // (Complex objects might have multiple, specialized handling needed later)
-                                const pathPoints = selectedLayer.paths[0].map((p: any) => ({ x: p[0], y: p[1] }));
+                                const pathPoints = selectedLayer.paths[0].map((p: number[]) => ({ x: p[0], y: p[1] }));
 
                                 import('@/services/stitchService').then(async ({ stitchService }) => {
                                     try {
@@ -252,15 +251,17 @@ export default function FabricSettings() {
                                         // Backend returns points. We need to format back to [[x,y]...] for layer storage
                                         const newPath = stitches.map(p => [p.x, p.y]);
 
-                                        useEditorStore.getState().updateLayerSettings(selectedLayerId, { ...settings, stitchType: 'satin' });
-                                        // We need a way to update the PATHS of the layer too.
-                                        // Adding updateLayerPaths to store would be ideal, but for now let's modify layers directly via setLayers 
-                                        // or just assume we visualize the 'type' change.
+                                        if (selectedLayerId) {
+                                            useEditorStore.getState().updateLayerSettings(selectedLayerId, { ...settings, stitchType: 'satin' });
+                                            // We need a way to update the PATHS of the layer too.
+                                            // Adding updateLayerPaths to store would be ideal, but for now let's modify layers directly via setLayers 
+                                            // or just assume we visualize the 'type' change.
 
-                                        // CRITICAL: EditorCanvas currently renders PATHS. 
-                                        // If we want to show the zigzag, we must replace the path with the zigzag path.
-                                        const newLayers = layers.map(l => l.id === selectedLayerId ? { ...l, paths: [newPath] } : l);
-                                        setLayers(newLayers);
+                                            // CRITICAL: EditorCanvas currently renders PATHS. 
+                                            // If we want to show the zigzag, we must replace the path with the zigzag path.
+                                            const newLayers = layers.map(l => l.id === selectedLayerId ? { ...l, paths: [newPath] } : l);
+                                            setLayers(newLayers);
+                                        }
 
                                     } catch (e) { console.error(e); }
                                 });
@@ -294,7 +295,7 @@ export default function FabricSettings() {
                                                 pullCompensation: 0,
                                                 underlay: false,
                                                 angle: 0,
-                                                stitchType: step.type as any
+                                                stitchType: step.type as StitchType
                                             }
                                         }));
 
