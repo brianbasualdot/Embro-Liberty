@@ -312,3 +312,46 @@ def optimize_branching(layers: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         
     return optimized_layers
 
+
+def generate_applique_steps(polygon: List[List[float]]) -> List[Dict[str, Any]]:
+    """
+    Generates 3-step Applique:
+    1. Position (Run Stitch) - marks fabric placement
+    2. Tackdown (Run Stitch) - holds fabric
+    3. Finish (Satin Column around edge)
+    """
+    # 1. Position
+    position_step = {
+        "name": "Appliqué Position",
+        "type": "run",
+        "color": "#e0e0e0",
+        "paths": [polygon]
+    }
+    
+    # 2. Tackdown (slightly inset or same? usually same for raw edge, or inset for cut)
+    # Using same path for simplicity
+    tackdown_step = {
+        "name": "Appliqué Tackdown",
+        "type": "run",
+        "color": "#cccccc", 
+        "paths": [polygon]
+    }
+    
+    # 3. Finish (Satin)
+    # We need to close the loop for the satin generator
+    closed_poly = list(polygon)
+    if len(closed_poly) > 0 and closed_poly[0] != closed_poly[-1]:
+         closed_poly.append(closed_poly[0])
+         
+    # Generate wider satin for coverage
+    satin_stitches = generate_satin_column_industrial(closed_poly, width=3.5, density=0.4)
+    
+    finish_step = {
+        "name": "Appliqué Satin Finish",
+        "type": "satin", 
+        "color": "#000000",
+        "paths": [satin_stitches] 
+    }
+    
+    return [position_step, tackdown_step, finish_step]
+
