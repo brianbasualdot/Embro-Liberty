@@ -6,7 +6,7 @@ import { FABRIC_PRESETS } from '@/constants/fabrics';
 import { Sliders, Lock, Unlock } from 'lucide-react';
 import clsx from 'clsx';
 
-import { StitchSettings } from '@/types/embroidery';
+import { StitchSettings, StitchType } from '@/types/embroidery';
 
 export default function FabricSettings() {
     const { selectedLayerId, layers, setLayers } = useEditorStore();
