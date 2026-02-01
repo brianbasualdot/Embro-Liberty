@@ -52,10 +52,7 @@ export default function Home() {
     <main className="flex h-screen w-full">
       <Sidebar />
       <div className="relative flex-1 flex flex-col">
-        {/* Top Bar / Toolbar placeholder */}
-        import HoopSelector from '@/components/editor/HoopSelector';
-
-        // ... inside component ...
+        {/* Top Bar / Toolbar */}
         <div className="h-14 border-b border-[#e5e5e5] bg-white flex items-center px-4 justify-between">
           <div className="flex items-center gap-4">
             <h1 className="font-medium text-sm">Untitled Design</h1>
@@ -70,7 +67,20 @@ export default function Home() {
           </label>
         </div>
 
-        <EditorCanvas />
+        <div className="flex-1 flex overflow-hidden">
+          <EditorCanvas />
+
+          {/* Right Sidebar for Layers & Settings */}
+          <div className="w-80 bg-white border-l border-[#e5e5e5] flex flex-col overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
+              <LayerList />
+            </div>
+            <div className="h-px bg-gray-200" />
+            <div className="flex-1 overflow-y-auto">
+              <FabricSettings />
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
