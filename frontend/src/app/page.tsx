@@ -5,6 +5,9 @@ import EditorCanvas from '@/components/editor/EditorCanvas';
 import { Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useEditorStore } from '@/store/editorStore';
+import HoopSelector from '@/components/editor/HoopSelector';
+import FabricSettings from '@/components/editor/FabricSettings';
+import LayerList from '@/components/layers/LayerList';
 
 export default function Home() {
   const { setLayers } = useEditorStore();
