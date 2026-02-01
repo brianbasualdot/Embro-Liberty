@@ -52,6 +52,44 @@ export default function FabricSettings() {
     // Transform Handlers
     const { activeTransform, requestTransformChange } = useEditorStore();
 
+    // State for async operations
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const handleAppliqueGen = async () => {
+        if (!selectedLayerId || !selectedLayer || !selectedLayer.paths || selectedLayer.paths.length === 0) return;
+
+        setIsGenerating(true);
+        try {
+            const polyPoints = selectedLayer.paths[0].map((p: any) => ({ x: p[0], y: p[1] }));
+
+            const { stitchService } = await import('@/services/stitchService');
+            const steps = await stitchService.generateApplique(polyPoints);
+
+            const newLayers = steps.map((step, idx) => ({
+                id: `${selectedLayerId}-app-${idx}`,
+                name: step.name,
+                color: step.color,
+                visible: true,
+                locked: false,
+                paths: step.paths,
+                settings: {
+                    density: step.type === 'satin' ? 0.4 : 4.0,
+                    pullCompensation: 0,
+                    underlay: false,
+                    angle: 0,
+                    stitchType: step.type as any
+                }
+            }));
+
+            const allLayers = [...layers, ...newLayers];
+            setLayers(allLayers);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const handleTransformChange = (key: string, val: string) => {
         const num = parseFloat(val);
         if (!isNaN(num)) {
@@ -360,6 +398,39 @@ export default function FabricSettings() {
                             onChange={(e) => handleSettingChange('stitchLength', parseFloat(e.target.value))}
                             className="w-full"
                         />
+                    </div>
+
+                    {/* OPTIMIZATION TOGGLES */}
+                    <div className="pt-2 border-t border-gray-100 space-y-3">
+                        <label className="flex items-center justify-between cursor-pointer">
+                            <span className="text-xs font-medium text-gray-700">Short Stitches</span>
+                            <div className="relative inline-block w-8 h-4 align-middle select-none transition duration-200 ease-in">
+                                <input
+                                    type="checkbox"
+                                    checked={settings.shortStitches ?? true}
+                                    onChange={(e) => handleSettingChange('shortStitches', e.target.checked ? 1 : 0)}
+                                    className="absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                                    style={{ right: settings.shortStitches !== false ? '0' : '50%', borderColor: settings.shortStitches !== false ? '#2563EB' : '#ccc' }}
+                                />
+                                <span className={clsx("block overflow-hidden h-4 rounded-full cursor-pointer", settings.shortStitches !== false ? "bg-blue-600" : "bg-gray-300")}></span>
+                            </div>
+                        </label>
+                        <p className="text-[10px] text-gray-400 -mt-2">Evita amontonamiento en curvas agudas.</p>
+
+                        <label className="flex items-center justify-between cursor-pointer">
+                            <span className="text-xs font-medium text-gray-700">Auto-Branching</span>
+                            <div className="relative inline-block w-8 h-4 align-middle select-none transition duration-200 ease-in">
+                                <input
+                                    type="checkbox"
+                                    checked={settings.autoBranching ?? true}
+                                    onChange={(e) => handleSettingChange('autoBranching', e.target.checked ? 1 : 0)}
+                                    className="absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer"
+                                    style={{ right: settings.autoBranching !== false ? '0' : '50%', borderColor: settings.autoBranching !== false ? '#2563EB' : '#ccc' }}
+                                />
+                                <span className={clsx("block overflow-hidden h-4 rounded-full cursor-pointer", settings.autoBranching !== false ? "bg-blue-600" : "bg-gray-300")}></span>
+                            </div>
+                        </label>
+                        <p className="text-[10px] text-gray-400 -mt-2">Minimiza cortes conectando objetos.</p>
                     </div>
 
                     {/* Lock Overlay if disabled */}
