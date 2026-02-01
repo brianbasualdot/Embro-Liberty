@@ -11,7 +11,7 @@ export const HOOP_PRESETS: Hoop[] = [
     // Singer
     { id: 'singer-s', name: 'Singer Small (100x100)', width: 100, height: 100, shape: 'rect', brand: 'singer' },
     { id: 'singer-m', name: 'Singer Medium (170x100)', width: 170, height: 100, shape: 'oval', brand: 'singer' },
-    { id: 'singer-l', name: 'Singer Large (260x160)', width: 260, height: 160, shape: 'rect', brand: 'singer' },
+    { id: 'singer-l', name: 'Singer Large (260x150)', width: 260, height: 150, shape: 'rect', brand: 'singer' },
 
     // Brother
     { id: 'brother-4x4', name: 'Brother 4x4 (100x100)', width: 100, height: 100, shape: 'rect', brand: 'brother' },

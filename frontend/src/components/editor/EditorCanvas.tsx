@@ -24,8 +24,8 @@ export default function EditorCanvas() {
                 fabricRef.current = fabric;
 
                 const canvas = new fabric.Canvas(canvasRef.current, {
-                    width: window.innerWidth - 256, // Adjust for sidebar
-                    height: window.innerHeight,
+                    width: window.innerWidth - (256 + 320), // Adjust for Left Sidebar (256) + Right Sidebar (320)
+                    height: window.innerHeight - 56, // Adjust for Top Bar (56)
                     backgroundColor: '#ffffff',
                     selection: true,
                     preserveObjectStacking: true,
@@ -34,8 +34,8 @@ export default function EditorCanvas() {
                 setFabricCanvas(canvas);
 
                 const handleResize = () => {
-                    canvas.setWidth(window.innerWidth - 256);
-                    canvas.setHeight(window.innerHeight);
+                    canvas.setWidth(window.innerWidth - (256 + 320));
+                    canvas.setHeight(window.innerHeight - 56);
                     canvas.renderAll();
                 };
 
