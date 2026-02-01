@@ -38,9 +38,10 @@ export default function FabricSettings() {
         }
     };
 
-    const handleSettingChange = (key: string, value: number) => {
+    const handleSettingChange = (key: string, value: number | string | boolean) => {
         if (!selectedLayerId) return;
 
+        // @ts-ignore
         const newSettings = { ...settings, [key]: value };
         setSettings(newSettings);
 
