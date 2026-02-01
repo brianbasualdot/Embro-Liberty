@@ -51,8 +51,23 @@ export default function FabricSettings() {
 
     if (!selectedLayer) {
         return (
-            <div className="p-4 text-gray-400 text-sm text-center">
-                Select a layer to configure fabric settings
+            <div className="p-4 space-y-6">
+                <div className="text-center p-4 bg-gray-50 rounded border border-gray-100 mb-4">
+                    <p className="text-sm text-gray-500">No layer selected</p>
+                    <p className="text-xs text-gray-400 mt-1">Select a layer to configure stitch settings.</p>
+                </div>
+
+                {/* Project / Hoop Settings Fallback */}
+                <div>
+                    <h3 className="font-semibold text-gray-900 text-sm mb-3">Project Settings</h3>
+                    <div className="space-y-3">
+                        <label className="block text-xs font-medium text-gray-700">Machine Hoop</label>
+                        {/* We could move HoopSelector here, OR just show info. Let's show info/reminder to use top bar */}
+                        <div className="p-3 bg-white border border-gray-200 rounded text-xs text-gray-600">
+                            Use the top toolbar to change the machine hoop size.
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }

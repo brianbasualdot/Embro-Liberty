@@ -13,6 +13,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 export default function Home() {
   const { setLayers } = useEditorStore();
   const [isUploading, setIsUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'layers' | 'settings'>('layers');
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,16 +80,32 @@ export default function Home() {
 
           {/* Right Sidebar for Layers & Settings */}
           <div className="w-80 bg-white border-l border-[#e5e5e5] flex flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto">
-              <ErrorBoundary componentName="LayerList">
-                <LayerList />
-              </ErrorBoundary>
+            {/* Tabs */}
+            <div className="flex border-b border-[#e5e5e5]">
+              <button
+                onClick={() => setActiveTab('layers')}
+                className={`flex-1 py-3 text-xs font-medium text-center transition-colors ${activeTab === 'layers' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+              >
+                Layers
+              </button>
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`flex-1 py-3 text-xs font-medium text-center transition-colors ${activeTab === 'settings' ? 'text-black border-b-2 border-black' : 'text-gray-500 hover:text-gray-800'}`}
+              >
+                Properties
+              </button>
             </div>
-            <div className="h-px bg-gray-200" />
-            <div className="flex-1 overflow-y-auto">
-              <ErrorBoundary componentName="FabricSettings">
-                <FabricSettings />
-              </ErrorBoundary>
+
+            <div className="flex-1 overflow-y-auto bg-[#f9f9f9]">
+              {activeTab === 'layers' ? (
+                <ErrorBoundary componentName="LayerList">
+                  <LayerList />
+                </ErrorBoundary>
+              ) : (
+                <ErrorBoundary componentName="FabricSettings">
+                  <FabricSettings />
+                </ErrorBoundary>
+              )}
             </div>
           </div>
         </div>
