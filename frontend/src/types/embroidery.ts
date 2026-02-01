@@ -9,6 +9,8 @@ export interface StitchSettings {
     angle: number; // degrees
     stitchLength?: number; // max stitch length mm
     stitchType?: StitchType;
+    shortStitches?: boolean;
+    autoBranching?: boolean;
 }
 
 export interface Transform {

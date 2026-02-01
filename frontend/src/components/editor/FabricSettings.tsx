@@ -409,7 +409,7 @@ export default function FabricSettings() {
                                 <input
                                     type="checkbox"
                                     checked={settings.shortStitches ?? true}
-                                    onChange={(e) => handleSettingChange('shortStitches', e.target.checked ? 1 : 0)}
+                                    onChange={(e) => handleSettingChange('shortStitches', e.target.checked)}
                                     className="absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer"
                                     style={{ right: settings.shortStitches !== false ? '0' : '50%', borderColor: settings.shortStitches !== false ? '#2563EB' : '#ccc' }}
                                 />
@@ -424,7 +424,7 @@ export default function FabricSettings() {
                                 <input
                                     type="checkbox"
                                     checked={settings.autoBranching ?? true}
-                                    onChange={(e) => handleSettingChange('autoBranching', e.target.checked ? 1 : 0)}
+                                    onChange={(e) => handleSettingChange('autoBranching', e.target.checked)}
                                     className="absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer"
                                     style={{ right: settings.autoBranching !== false ? '0' : '50%', borderColor: settings.autoBranching !== false ? '#2563EB' : '#ccc' }}
                                 />
