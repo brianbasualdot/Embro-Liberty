@@ -18,10 +18,20 @@ export default function EditorCanvas() {
 
         const initFabric = async () => {
             try {
+                // Fabric v6/v7 often exports named exports.
                 const fabricModule = await import('fabric');
+                // Check if it's strictly a namespace or uses default
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const fabric = (fabricModule as any).default || fabricModule;
                 fabricRef.current = fabric;
+
+                // Safely instantiate
+                // In v6+, it might be fabric.Canvas or just Canvas if we destructured. 
+                // Using the 'fabric' namespace object pattern.
+                if (!fabric.Canvas) {
+                    console.error("Fabric Canvas constructor not found in module", fabric);
+                    return;
+                }
 
                 const canvas = new fabric.Canvas(canvasRef.current, {
                     width: window.innerWidth - (256 + 320), // Adjust for Left Sidebar (256) + Right Sidebar (320)
@@ -34,13 +44,18 @@ export default function EditorCanvas() {
                 setFabricCanvas(canvas);
 
                 const handleResize = () => {
-                    canvas.setWidth(window.innerWidth - (256 + 320));
-                    canvas.setHeight(window.innerHeight - 56);
-                    canvas.renderAll();
+                    if (canvas && typeof canvas.setWidth === 'function') {
+                        canvas.setWidth(window.innerWidth - (256 + 320));
+                        canvas.setHeight(window.innerHeight - 56);
+                        canvas.renderAll();
+                    }
                 };
 
                 window.addEventListener('resize', handleResize);
-                handleResize(); // Initial resize
+
+                // Don't call handleResize immediately if we just set dims in constructor
+                // but for safety/consistency:
+                // handleResize(); 
 
                 return () => {
                     window.removeEventListener('resize', handleResize);
