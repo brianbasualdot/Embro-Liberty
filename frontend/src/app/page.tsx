@@ -8,6 +8,7 @@ import { useEditorStore } from '@/store/editorStore';
 import HoopSelector from '@/components/editor/HoopSelector';
 import FabricSettings from '@/components/editor/FabricSettings';
 import LayerList from '@/components/layers/LayerList';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 export default function Home() {
   const { setLayers } = useEditorStore();
@@ -50,14 +51,18 @@ export default function Home() {
 
   return (
     <main className="flex h-screen w-full">
-      <Sidebar />
+      <ErrorBoundary componentName="Sidebar">
+        <Sidebar />
+      </ErrorBoundary>
       <div className="relative flex-1 flex flex-col">
         {/* Top Bar / Toolbar */}
         <div className="h-14 border-b border-[#e5e5e5] bg-white flex items-center px-4 justify-between">
           <div className="flex items-center gap-4">
             <h1 className="font-medium text-sm">Untitled Design</h1>
             <div className="h-4 w-px bg-gray-200"></div>
-            <HoopSelector />
+            <ErrorBoundary componentName="HoopSelector">
+              <HoopSelector />
+            </ErrorBoundary>
           </div>
 
           <label className="flex items-center gap-2 px-3 py-1.5 bg-black text-white text-xs rounded hover:bg-gray-800 cursor-pointer transition-colors">
@@ -68,16 +73,22 @@ export default function Home() {
         </div>
 
         <div className="flex-1 flex overflow-hidden">
-          <EditorCanvas />
+          <ErrorBoundary componentName="EditorCanvas">
+            <EditorCanvas />
+          </ErrorBoundary>
 
           {/* Right Sidebar for Layers & Settings */}
           <div className="w-80 bg-white border-l border-[#e5e5e5] flex flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto">
-              <LayerList />
+              <ErrorBoundary componentName="LayerList">
+                <LayerList />
+              </ErrorBoundary>
             </div>
             <div className="h-px bg-gray-200" />
             <div className="flex-1 overflow-y-auto">
-              <FabricSettings />
+              <ErrorBoundary componentName="FabricSettings">
+                <FabricSettings />
+              </ErrorBoundary>
             </div>
           </div>
         </div>
