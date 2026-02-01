@@ -66,7 +66,8 @@ export default function EditorCanvas() {
 
         // Clear existing objects but keep background
         fabricCanvas.clear();
-        fabricCanvas.setBackgroundColor('#ffffff', () => { });
+        fabricCanvas.backgroundColor = '#ffffff';
+        fabricCanvas.renderAll();
 
         layers.forEach((layer) => {
             if (!layer.visible) return;
