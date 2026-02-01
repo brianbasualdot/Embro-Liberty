@@ -1,10 +1,11 @@
 export type ToolType = 'select' | 'node_edit' | 'pen' | 'rectangle' | 'circle' | 'knife';
 
-density: number; // Stitches per mm
-pullCompensation: number; // mm
-underlay: boolean;
-angle: number; // degrees
-stitchLength ?: number; // max stitch length mm
+export interface StitchSettings {
+    density: number; // Stitches per mm
+    pullCompensation: number; // mm
+    underlay: boolean;
+    angle: number; // degrees
+    stitchLength?: number; // max stitch length mm
 }
 
 export interface Layer {

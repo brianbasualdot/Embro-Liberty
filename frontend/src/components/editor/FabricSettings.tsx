@@ -6,6 +6,8 @@ import { FABRIC_PRESETS } from '@/constants/fabrics';
 import { Sliders, Lock, Unlock } from 'lucide-react';
 import clsx from 'clsx';
 
+import { StitchSettings } from '@/types/embroidery';
+
 export default function FabricSettings() {
     const { selectedLayerId, layers, setLayers } = useEditorStore();
     const [advancedMode, setAdvancedMode] = useState(false);
@@ -13,7 +15,7 @@ export default function FabricSettings() {
     const selectedLayer = layers.find(l => l.id === selectedLayerId);
 
     // Local state for sliders to perform smoothly, synced with store
-    const [settings, setSettings] = useState(selectedLayer?.settings || {});
+    const [settings, setSettings] = useState<Partial<StitchSettings>>(selectedLayer?.settings || {});
     const [selectedPreset, setSelectedPreset] = useState<string>('custom');
 
     // Sync when layer changes

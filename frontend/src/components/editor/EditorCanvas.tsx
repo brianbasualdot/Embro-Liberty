@@ -100,6 +100,7 @@ export default function EditorCanvas() {
     // Draw Hoop Helper
     useEffect(() => {
         if (!fabricCanvas || !selectedHoopId) return;
+        const fabric = fabricRef.current;
 
         // Clear existing hoop
         fabricCanvas.getObjects().forEach((obj: any) => {
