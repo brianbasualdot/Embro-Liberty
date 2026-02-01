@@ -71,18 +71,30 @@ export default function EditorCanvas() {
         return () => {
             cleanup.then(f => f && f());
         };
-    }, [fabricCanvas]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Sync Layers with Canvas
     useEffect(() => {
         if (!fabricCanvas || !fabricRef.current) return;
 
+        // Guard against disposed canvas
+        if (!fabricCanvas.contextContainer) return;
+
+        try {
+            const fabric = fabricRef.current;
+
+            // Clear existing objects but keep background
+            fabricCanvas.clear();
+            fabricCanvas.backgroundColor = '#ffffff';
+            // fabricCanvas.renderAll(); // Defer render until after adding layers?
+        } catch (e) {
+            console.warn("Canvas error during clear:", e);
+            return;
+        }
+
         const fabric = fabricRef.current;
 
-        // Clear existing objects but keep background
-        fabricCanvas.clear();
-        fabricCanvas.backgroundColor = '#ffffff';
-        fabricCanvas.renderAll();
 
         layers.forEach((layer) => {
             if (!layer.visible) return;
