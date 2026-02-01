@@ -97,11 +97,20 @@ export default function EditorCanvas() {
                     const polygon = new fabric.Polygon(points, {
                         fill: 'transparent',
                         stroke: layer.color,
-                        strokeWidth: 2,
+                        strokeWidth: 0.4, // Real 0.4mm thread thickness
+                        strokeLineCap: 'round',
+                        strokeLineJoin: 'round',
                         selectable: true,
                         perPixelTargetFind: true,
                         name: layer.id,
-                        objectCaching: false
+                        objectCaching: false,
+                        // 3D Shadow for "Relief" effect
+                        shadow: new fabric.Shadow({
+                            color: 'rgba(0,0,0,0.3)',
+                            blur: 1,
+                            offsetX: 0.5,
+                            offsetY: 0.5
+                        })
                     });
 
                     fabricCanvas.add(polygon);
@@ -208,6 +217,36 @@ export default function EditorCanvas() {
         fabricCanvas.off('object:modified');
         fabricCanvas.off('selection:created');
         fabricCanvas.off('selection:updated');
+        fabricCanvas.off('selection:cleared');
+
+        // Helper to update store with current transform
+        const updateTransformStore = (obj: any) => {
+            if (!obj) {
+                useEditorStore.getState().setActiveTransform(null);
+                return;
+            }
+            useEditorStore.getState().setActiveTransform({
+                x: Math.round(obj.left || 0),
+                y: Math.round(obj.top || 0),
+                width: Math.round((obj.width || 0) * (obj.scaleX || 1)),
+                height: Math.round((obj.height || 0) * (obj.scaleY || 1)),
+                rotation: Math.round(obj.angle || 0),
+                scaleX: obj.scaleX || 1,
+                scaleY: obj.scaleY || 1
+            });
+        };
+
+        const onSelection = (e: any) => {
+            const obj = e.selected ? e.selected[0] : e.target;
+            if (activeTool === 'node_edit') {
+                // ... node edit logic if needed
+            }
+            updateTransformStore(obj);
+        };
+
+        fabricCanvas.on('selection:created', onSelection);
+        fabricCanvas.on('selection:updated', onSelection);
+        fabricCanvas.on('selection:cleared', () => updateTransformStore(null));
 
         if (activeTool === 'select') {
             fabricCanvas.selection = true;
@@ -219,7 +258,6 @@ export default function EditorCanvas() {
             });
         } else if (activeTool === 'node_edit') {
             fabricCanvas.selection = false;
-
             // Allow selection but disable standard controls
             fabricCanvas.forEachObject((obj: any) => {
                 obj.selectable = true;
@@ -227,19 +265,7 @@ export default function EditorCanvas() {
                 obj.hasControls = false; // Disable standard scaling/rotation controls
                 obj.hasBorders = true;
             });
-
-            // On selection, show nodes
-            const showNodes = (e: any) => {
-                const activeObj = e.selected ? e.selected[0] : e.target;
-                if (!activeObj || !activeObj.points) return;
-
-                // Visual feedback only for now
-                activeObj.hasControls = true;
-            };
-
-            fabricCanvas.on('selection:created', showNodes);
-            fabricCanvas.on('selection:updated', showNodes);
-
+            // ... existing node edit logic ...
         } else {
             // Other tools (Pen, etc.)
             fabricCanvas.selection = false;
@@ -249,17 +275,56 @@ export default function EditorCanvas() {
             });
         }
 
-        // Common: Update stitch count on modification
+        // Common: Update stitch count on modification AND transform
         fabricCanvas.on('object:modified', (e: any) => {
             const obj = e.target;
-            if (obj && obj.name) {
+            if (!obj) return;
+
+            updateTransformStore(obj);
+
+            if (obj.name) {
                 // Rough estimation: Perimeter * Density * 2
                 const newCount = Math.floor((obj.width * obj.scaleX + obj.height * obj.scaleY) * 2);
                 updateLayerStitchCount(obj.name, newCount);
             }
         });
 
+        // Also update on moving/scaling for liveness? 
+        // Might be too many updates for Zustand, stick to 'modified' (end of drag) for now.
+
     }, [fabricCanvas, activeTool, updateLayerStitchCount]);
+
+    // Listen for Property Panel changes
+    const pendingTransformChange = useEditorStore(state => state.pendingTransformChange);
+    const clearPendingTransformChange = useEditorStore(state => state.clearPendingTransformChange);
+
+    useEffect(() => {
+        if (!fabricCanvas || !pendingTransformChange) return;
+
+        const activeObj = fabricCanvas.getActiveObject();
+        if (!activeObj) return;
+
+        const { key, value } = pendingTransformChange;
+
+        switch (key) {
+            case 'x': activeObj.set('left', value); break;
+            case 'y': activeObj.set('top', value); break;
+            case 'rotation': activeObj.set('angle', value); break;
+            case 'width':
+                // Scaling width keeping aspect ratio or just scaleX? Usually width change implies scale change in fabric
+                // fabric width is static, we change scaleX
+                if (activeObj.width) activeObj.set('scaleX', value / activeObj.width);
+                break;
+            case 'height':
+                if (activeObj.height) activeObj.set('scaleY', value / activeObj.height);
+                break;
+        }
+
+        activeObj.setCoords();
+        fabricCanvas.requestRenderAll();
+        clearPendingTransformChange();
+
+    }, [fabricCanvas, pendingTransformChange, clearPendingTransformChange]);
 
 
     return (

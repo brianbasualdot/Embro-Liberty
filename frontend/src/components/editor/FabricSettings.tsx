@@ -49,7 +49,18 @@ export default function FabricSettings() {
         setSelectedPreset('custom'); // Switch to custom if modified manually
     };
 
+    // Transform Handlers
+    const { activeTransform, requestTransformChange } = useEditorStore();
+
+    const handleTransformChange = (key: string, val: string) => {
+        const num = parseFloat(val);
+        if (!isNaN(num)) {
+            requestTransformChange(key, num);
+        }
+    };
+
     if (!selectedLayer) {
+        // ... (return null or empty state, unchanged)
         return (
             <div className="p-4 space-y-6">
                 <div className="text-center p-4 bg-gray-50 rounded border border-gray-100 mb-4">
@@ -62,7 +73,6 @@ export default function FabricSettings() {
                     <h3 className="font-semibold text-gray-900 text-sm mb-3">Configuración del Proyecto</h3>
                     <div className="space-y-3">
                         <label className="block text-xs font-medium text-gray-700">Bastidor de Máquina</label>
-                        {/* We could move HoopSelector here, OR just show info. Let's show info/reminder to use top bar */}
                         <div className="p-3 bg-white border border-gray-200 rounded text-xs text-gray-600">
                             Usa la barra superior para cambiar el tamaño del bastidor.
                         </div>
@@ -74,6 +84,195 @@ export default function FabricSettings() {
 
     return (
         <div className="p-4 space-y-6 bg-white border-l border-[#e5e5e5] h-full w-80 overflow-y-auto">
+
+            {/* GENERATIVE TOOLS */}
+            <div className="space-y-3 pb-4 border-b border-gray-100">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2 text-xs uppercase tracking-wider">
+                    Herramientas Inteligentes
+                </h3>
+                <div className="grid grid-cols-1 gap-2">
+                    <button
+                        onClick={handleAppliqueGen}
+                        disabled={isGenerating}
+                        className="w-full py-2 bg-indigo-600 text-white rounded text-xs font-medium hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                        {isGenerating ? 'Generando...' : '✨ Crear Appliqué Automático'}
+                    </button>
+                    {/* Placeholder for Auto-Satin */}
+                    <button
+                        className="w-full py-2 bg-white border border-gray-200 text-gray-700 rounded text-xs font-medium hover:bg-gray-50"
+                    >
+                        Convertir a Satín (Beta)
+                    </button>
+                </div>
+            </div>
+
+            {/* TRANSFORM CONTROLS */}
+            <div className="space-y-3 pb-4 border-b border-gray-100">
+                <h3 className="font-semibold text-gray-900 flex items-center gap-2 text-xs uppercase tracking-wider">
+                    Transformación
+                </h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                        <label className="text-[10px] text-gray-500 font-medium">Posición X (mm)</label>
+                        <input
+                            type="number"
+                            className="w-full p-1.5 text-xs border border-gray-200 rounded"
+                            value={activeTransform?.x || 0}
+                            onChange={(e) => handleTransformChange('x', e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[10px] text-gray-500 font-medium">Posición Y (mm)</label>
+                        <input
+                            type="number"
+                            className="w-full p-1.5 text-xs border border-gray-200 rounded"
+                            value={activeTransform?.y || 0}
+                            onChange={(e) => handleTransformChange('y', e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[10px] text-gray-500 font-medium">Ancho (mm)</label>
+                        <input
+                            type="number"
+                            className="w-full p-1.5 text-xs border border-gray-200 rounded"
+                            value={activeTransform?.width || 0}
+                            onChange={(e) => handleTransformChange('width', e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-[10px] text-gray-500 font-medium">Alto (mm)</label>
+                        <input
+                            type="number"
+                            className="w-full p-1.5 text-xs border border-gray-200 rounded"
+                            value={activeTransform?.height || 0}
+                            onChange={(e) => handleTransformChange('height', e.target.value)}
+                        />
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                        <label className="text-[10px] text-gray-500 font-medium">Rotación (°)</label>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="range" min="0" max="360"
+                                className="flex-1"
+                                value={activeTransform?.rotation || 0}
+                                onChange={(e) => handleTransformChange('rotation', e.target.value)}
+                            />
+                            <span className="text-xs w-8 text-right">{Math.round(activeTransform?.rotation || 0)}°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* STITCH TYPE SELECTOR */}
+            <div className="space-y-2 pb-4 border-b border-gray-100">
+                <h3 className="font-semibold text-gray-900 text-xs uppercase tracking-wider">
+                    Tipo de Puntada
+                </h3>
+                <div className="grid grid-cols-3 gap-2">
+                    {['satin', 'tatami', 'run'].map((type) => (
+                        <button
+                            key={type}
+                            onClick={() => handleSettingChange('stitchType', type)}
+                            className={clsx(
+                                "py-2 px-1 text-[10px] font-medium border rounded capitalize transition-colors",
+                                settings.stitchType === type
+                                    ? "bg-black text-white border-black"
+                                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                            )}
+                        >
+                            {type === 'run' ? 'Corrido' : type}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* OPERATIONS */}
+            <div className="space-y-3 pb-4 border-b border-gray-100">
+                <h3 className="font-semibold text-gray-900 text-xs uppercase tracking-wider">
+                    Operaciones
+                </h3>
+                <div className="flex flex-col gap-2">
+                    <button
+                        onClick={async () => {
+                            // Logic to convert current selected object to Satin
+                            // We need to get the points from the selected object (canvas).
+                            // Since we don't have direct access to canvas object points here easily without store helper,
+                            // we might need to assume the layer paths are the source.
+                            if (selectedLayer && selectedLayer.paths && selectedLayer.paths.length > 0) {
+                                // Taking the first path for now as 'path' 
+                                // (Complex objects might have multiple, specialized handling needed later)
+                                const pathPoints = selectedLayer.paths[0].map((p: any) => ({ x: p[0], y: p[1] }));
+
+                                import('@/services/stitchService').then(async ({ stitchService }) => {
+                                    try {
+                                        const stitches = await stitchService.generateSatin(pathPoints, 4.0, 0.4);
+                                        // Update layer with new stitches? Or create new layer?
+                                        // User expects "Convert", so let's update.
+                                        // Backend returns points. We need to format back to [[x,y]...] for layer storage
+                                        const newPath = stitches.map(p => [p.x, p.y]);
+
+                                        useEditorStore.getState().updateLayerSettings(selectedLayerId, { ...settings, stitchType: 'satin' });
+                                        // We need a way to update the PATHS of the layer too.
+                                        // Adding updateLayerPaths to store would be ideal, but for now let's modify layers directly via setLayers 
+                                        // or just assume we visualize the 'type' change.
+
+                                        // CRITICAL: EditorCanvas currently renders PATHS. 
+                                        // If we want to show the zigzag, we must replace the path with the zigzag path.
+                                        const newLayers = layers.map(l => l.id === selectedLayerId ? { ...l, paths: [newPath] } : l);
+                                        setLayers(newLayers);
+
+                                    } catch (e) { console.error(e); }
+                                });
+                            }
+                        }}
+                        className="w-full py-2 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors"
+                    >
+                        Generar Satín (Auto)
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            if (selectedLayer && selectedLayer.paths && selectedLayer.paths.length > 0) {
+                                const polyPoints = selectedLayer.paths[0].map((p: any) => ({ x: p[0], y: p[1] }));
+
+                                import('@/services/stitchService').then(async ({ stitchService }) => {
+                                    try {
+                                        const steps = await stitchService.generateApplique(polyPoints);
+
+                                        // Applique creates 3 new layers or replaces?
+                                        // Usually creates 3 layers.
+                                        const newLayers = steps.map((step, idx) => ({
+                                            id: `${selectedLayerId}-app-${idx}`,
+                                            name: step.name,
+                                            color: step.color,
+                                            visible: true,
+                                            locked: false,
+                                            paths: step.paths, // already in [[x,y]...] format from backend
+                                            settings: {
+                                                density: step.type === 'satin' ? 0.4 : 4.0,
+                                                pullCompensation: 0,
+                                                underlay: false,
+                                                angle: 0,
+                                                stitchType: step.type as any
+                                            }
+                                        }));
+
+                                        // Insert after current or replace? Let's add them.
+                                        const allLayers = [...layers, ...newLayers];
+                                        setLayers(allLayers);
+
+                                    } catch (e) { console.error(e); }
+                                });
+                            }
+                        }}
+                        className="w-full py-2 bg-purple-600 text-white text-xs font-medium rounded hover:bg-purple-700 transition-colors"
+                    >
+                        Crear Appliqué (3 Pasos)
+                    </button>
+                </div>
+            </div>
 
             <div className="space-y-2">
                 <h3 className="font-semibold text-gray-900 flex items-center gap-2">

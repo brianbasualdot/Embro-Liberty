@@ -1,11 +1,24 @@
 export type ToolType = 'select' | 'node_edit' | 'pen' | 'rectangle' | 'circle' | 'knife';
 
+export type StitchType = 'satin' | 'tatami' | 'run';
+
 export interface StitchSettings {
     density: number; // Stitches per mm
     pullCompensation: number; // mm
     underlay: boolean;
     angle: number; // degrees
     stitchLength?: number; // max stitch length mm
+    stitchType?: StitchType;
+}
+
+export interface Transform {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    rotation: number;
+    scaleX: number;
+    scaleY: number;
 }
 
 export interface Layer {

@@ -15,6 +15,15 @@ interface EditorState {
     setTool: (tool: ToolType) => void;
     updateLayerStitchCount: (id: string, count: number) => void;
     updateLayerSettings: (id: string, settings: any) => void;
+
+    // Transform / Properties
+    activeTransform: any | null; // { x, y, width, height, rotation, scaleX, scaleY }
+    setActiveTransform: (transform: any | null) => void;
+
+    // Mechanism to push changes from UI to Canvas
+    pendingTransformChange: { key: string, value: number } | null;
+    requestTransformChange: (key: string, value: number) => void;
+    clearPendingTransformChange: () => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -22,6 +31,13 @@ export const useEditorStore = create<EditorState>((set) => ({
     selectedLayerId: null,
     activeTool: 'select',
     selectedHoopId: 'singer-s', // Default
+    activeTransform: null,
+    pendingTransformChange: null,
+
+    setActiveTransform: (transform) => set({ activeTransform: transform }),
+    requestTransformChange: (key, value) => set({ pendingTransformChange: { key, value } }),
+    clearPendingTransformChange: () => set({ pendingTransformChange: null }),
+
     selectHoop: (id) => set({ selectedHoopId: id }),
     setLayers: (layers) => set({ layers }),
     toggleLayerVisibility: (id) =>

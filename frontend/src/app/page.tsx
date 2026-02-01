@@ -70,11 +70,39 @@ export default function Home() {
             </ErrorBoundary>
           </div>
 
-          <label className="flex items-center gap-2 px-3 py-1.5 bg-black text-white text-xs rounded hover:bg-gray-800 cursor-pointer transition-colors">
-            <Upload size={14} />
-            {isUploading ? "Processing..." : "Import Image"}
-            <input type="file" className="hidden" accept="image/*" onChange={handleUpload} disabled={isUploading} />
-          </label>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const { layers } = useEditorStore.getState();
+                if (layers.length === 0) return alert("No hay nada que exportar.");
+
+                fetch('http://localhost:8000/export', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ layers, format: 'dst' })
+                })
+                  .then(res => res.blob())
+                  .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = "bordado_liberty.dst";
+                    a.click();
+                  })
+                  .catch(e => console.error(e));
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700 cursor-pointer transition-colors"
+            >
+              <Upload size={14} className="rotate-180" />
+              Exportar DST
+            </button>
+
+            <label className="flex items-center gap-2 px-3 py-1.5 bg-black text-white text-xs rounded hover:bg-gray-800 cursor-pointer transition-colors">
+              <Upload size={14} />
+              {isUploading ? "Procesando..." : "Importar Imagen"}
+              <input type="file" className="hidden" accept="image/*" onChange={handleUpload} disabled={isUploading} />
+            </label>
+          </div>
         </div>
 
         <div className="flex-1 flex overflow-hidden">
